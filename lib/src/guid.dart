@@ -43,7 +43,7 @@ class Guid {
     return bytes;
   }
 
-  static List<int> _fromString(input) {
+  static List<int> _fromString(String input) {
     var bytes = new List<int>.filled(16, 0);
     if (input == null) {
       throw new ArgumentError("Input was null");
@@ -52,20 +52,21 @@ class Guid {
       throw new FormatException("The format is invalid");
     }
     input = input.toLowerCase();
-
-    final RegExp regex = new RegExp('[0-9a-f]{2}');
-    Iterable<Match> matches = regex.allMatches(input);
-    if (matches.length != 16) {
-      throw new FormatException("The format is invalid");
+    final isValid = input.replaceAll("-", "").codeUnits.every(
+        (unit) => (48 <= unit && unit <= 57) || (95 <= unit && unit <= 102));
+    if (!isValid) {
+      throw new FormatException("The format is invalid: " + input);
     }
+
     int i = 0;
-    for (Match match in matches) {
-      var hexString = input.substring(match.start, match.end);
-      bytes[i] = hex.decode(hexString)[0];
-      i++;
+    for (var idx = 0; idx < 32; idx += 2) {
+      var hexString = input.substring(idx, idx + 2);
+      bytes[i++] = hex.decode(hexString).first;
     }
     return bytes;
   }
+
+
 
   static int _calcHashCode(List<int> bytes) {
     const equality = const ListEquality<int>();
