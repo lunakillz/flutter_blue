@@ -51,8 +51,8 @@ class Guid {
     if (input.length < 32) {
       throw new FormatException("The format is invalid");
     }
-    input = input.toLowerCase();
-    final isValid = input.replaceAll("-", "").codeUnits.every(
+    input = input.toLowerCase().replaceAll("-", "");
+    final isValid = input.codeUnits.every(
         (unit) => (48 <= unit && unit <= 57) || (95 <= unit && unit <= 102));
     if (!isValid) {
       throw new FormatException("The format is invalid: " + input);
